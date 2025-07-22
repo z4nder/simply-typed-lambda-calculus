@@ -46,3 +46,42 @@ If e₁ is a function from σ to τ, and e₂ is an argument of type σ:
 ──────────────────────────────
          Γ ⊢ e₁ e₂ : τ
 ```
+
+### Usage
+Set input
+```rust
+fn main() {
+    let input = "(λx:A -> A. x) y:A -> A".to_string();
+
+    match process_input(input) {
+        Ok((term, type_option)) => {
+            if let Some(ty) = type_option {
+                println!("Tipo: {}", ty);
+            } else {
+                println!("Tipo: não verificado");
+            }
+            println!("Resultado: {}", term);
+            println!("Debug: {:#?}", term);
+        }
+        Err(err) => eprintln!("Erro: {}", err),
+    }
+}
+```
+Output example
+```
+Tipo: (A -> A)
+Resultado: y:(A -> A)
+Debug: Var(
+    "y",
+    Some(
+        Arrow(
+            Named(
+                "A",
+            ),
+            Named(
+                "A",
+            ),
+        ),
+    ),
+)
+```

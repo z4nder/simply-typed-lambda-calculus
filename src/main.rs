@@ -11,7 +11,7 @@ use eval::eval;
 use lexer::lexer;
 
 fn main() {
-    let input = "(λx:Bool. x) true".to_string();
+    let input = "(λx:A -> A. x) y:A -> A".to_string();
 
     match process_input(input) {
         Ok((term, type_option)) => {
