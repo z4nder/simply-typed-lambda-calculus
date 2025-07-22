@@ -14,19 +14,16 @@ pub fn eval(term: Term) -> Term {
 
         Term::Abs(param, ty, body) => Term::Abs(param, ty, Box::new(eval(*body))),
 
-        Term::Var(_) => term,
+        Term::Var(_, _) => term,
     }
 }
 
 pub fn substitute(var: &str, value: &Term, term: Term) -> Term {
     match term {
-        Term::Var(name) if name == var => value.clone(),
-        Term::Var(_) => term,
+        Term::Var(name, _) if name == var => value.clone(),
+        Term::Var(_, _) => term,
 
-        Term::Abs(param, ty, body) if param == var => {
-            // Variável está sombreando — não substitui ????
-            Term::Abs(param, ty, body)
-        }
+        Term::Abs(param, ty, body) if param == var => Term::Abs(param, ty, body),
 
         Term::Abs(param, ty, body) => {
             let new_body = substitute(var, value, *body);

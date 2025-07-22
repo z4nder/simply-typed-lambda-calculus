@@ -4,7 +4,7 @@ use crate::lexer::Token;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Term {
-    Var(String),
+    Var(String, Option<Type>),
     Abs(String, Option<Type>, Box<Term>),
     App(Box<Term>, Box<Term>),
 }
@@ -25,7 +25,8 @@ pub struct Parser {
 impl fmt::Display for Term {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Term::Var(name) => write!(f, "{}", name),
+            Term::Var(name, Some(ty)) => write!(f, "{}:{}", name, ty),
+            Term::Var(name, None) => write!(f, "{}", name),
             Term::Abs(param, Some(ty), body) => write!(f, "λ{}:{}.({})", param, ty, body),
             Term::Abs(param, None, body) => write!(f, "λ{}.({})", param, body),
             Term::App(left, right) => write!(f, "({}) ({})", left, right),
@@ -127,17 +128,26 @@ impl Parser {
     fn parse_atom(&mut self) -> Term {
         match self.peek() {
             Some(Token::Var(_)) => {
-                if let Token::Var(name) = self.advance().unwrap() {
-                    Term::Var(name.clone())
+                let name = if let Token::Var(name) = self.advance().unwrap() {
+                    name.clone()
                 } else {
                     unreachable!()
-                }
+                };
+
+                let ty = if self.peek() == Some(&Token::Colon) {
+                    self.advance();
+                    Some(self.parse_type())
+                } else {
+                    None
+                };
+
+                Term::Var(name.clone(), ty)
             }
 
             Some(Token::Lambda) => self.parse_abstraction(),
 
             Some(Token::LParen) => {
-                self.advance(); // consome '('
+                self.advance();
                 let term = self.parse_term();
                 self.expect(Token::RParen);
                 term
