@@ -3,38 +3,6 @@ use std::collections::HashMap;
 use crate::parser::{Term, Type};
 pub type Context = HashMap<String, Type>; // Context -> Γ HIIHIIH 
 
-/// *
-/// Rules
-///  1.If a variable x has type σ in the context Γ, then:
-/// ``
-/// x:σ ∈ Γ
-/// ──────────────
-/// Γ ⊢ x : σ
-/// ``
-///
-/// 2. Constants Rules
-/// If `c` is a constant of type `T`:
-/// ```
-/// c is a constant of type T
-/// ──────────────────────────
-/// Γ ⊢ c : T
-/// ```
-///
-/// 3. Abstraction rules
-/// If under context Γ extended with x:σ the term e has type τ, then:
-/// ```
-/// Γ, x:σ ⊢ e : τ
-/// ────────────────────────────
-/// Γ ⊢ (λx:σ. e) : (σ → τ)
-/// ```
-///
-/// 4. Application Rule
-/// If e₁ is a function from σ to τ, and e₂ is an argument of type σ:
-/// ```
-/// Γ ⊢ e₁ : σ → τ      Γ ⊢ e₂ : σ
-/// ──────────────────────────────
-///          Γ ⊢ e₁ e₂ : τ
-/// ```
 /// * # TODO
 ///  * Talvez eu não deveria aceitar x:Y poiss isso sai do lambda
 ///  * Justamente deria ter que declara o Context 'manualmente' montar meu input e manter as Vars lambda possibilidade de Type
